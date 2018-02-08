@@ -53,7 +53,7 @@ class FileSystem extends umi.FileSystem{
     path = await toAbsoltePath(path);
     bool isFile = await dio.FileSystemEntity.isFile(path);
     if(isFile) {
-      yield new File(new dio.File(path), null);
+      yield new File(new dio.File(path));
     } else {
       dio.Directory d = new dio.Directory(path);
       if (false == await d.exists()) {
@@ -65,7 +65,7 @@ class FileSystem extends umi.FileSystem{
         if(f is dio.Directory) {
           yield new Directory(f);
         } else {
-          yield new File(f, null);
+          yield new File(f);
         }
       }
     }
@@ -78,17 +78,17 @@ class FileSystem extends umi.FileSystem{
     return _currentDirectory;
   }
 
-  Future<File> open(String path) async {
+  Future<umi.Entry> getEntry(String path) async {
     path = await toAbsoltePath(path);
     if(true == await dio.FileSystemEntity.isDirectory(path)) {
       dio.Directory d = new dio.Directory(path);
-      return new File(d, null);
+      return new Directory(d);
     } else {
       dio.File f = new dio.File(path);
       if (false == await f.exists()) {
         await f.create();
       }
-      return new File(f, await f.open(mode: dio.FileMode.APPEND));
+      return new File(f);
     }
   }
 
@@ -113,7 +113,7 @@ class FileSystem extends umi.FileSystem{
   }
 
   @override
-  Future<umi.Entry> getHomeDirectory() async {
+  Future<umi.Directory> getHomeDirectory() async {
     return new Directory(dio.Directory.current);
   }
 
